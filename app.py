@@ -13,6 +13,8 @@ class App(QtWidgets.QWidget):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.setWindowTitle("VD Viewer | version %s" % version.current)
+        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+
         layout = QtWidgets.QVBoxLayout()
 
         view = QtWidgets.QListWidget()
