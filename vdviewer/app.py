@@ -4,7 +4,7 @@ import sys
 
 from maya import cmds
 
-from avalon.vendor.Qt import QtWidgets, QtCore
+from vendor.Qt import QtWidgets, QtCore
 
 import version
 import lib
@@ -23,16 +23,21 @@ class App(QtWidgets.QWidget):
 
         layout = QtWidgets.QVBoxLayout()
 
+        refresh_button = QtWidgets.QPushButton("Refresh")
+
         view = QtWidgets.QListWidget()
         view.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 
+        layout.addWidget(refresh_button)
         layout.addWidget(view)
 
         self.view = view
+        self.refresh_button = refresh_button
 
         self.setLayout(layout)
-        self.resize(300, 450)
+        self.setFixedWidth(300)
+        self.setFixedHeight(450)
 
         self.connections()
 
@@ -41,6 +46,7 @@ class App(QtWidgets.QWidget):
     def connections(self):
         self.view.doubleClicked.connect(self.on_double_clicked)
         self.view.customContextMenuRequested.connect(self.show_rmb_menu)
+        self.refresh_button.clicked.connect(self.refresh)
 
     def refresh(self):
         self.view.clear()
@@ -74,8 +80,13 @@ class App(QtWidgets.QWidget):
         remove_items_action = QtWidgets.QAction("Remove Selected", menu)
         remove_items_action.triggered.connect(self.on_remove_select_item)
 
+        select_contained_action = QtWidgets.QAction("Select Contained", menu)
+        select_contained_action.triggered.connect(self.on_select_contained)
+
         menu.addAction(add_items_action)
         menu.addAction(remove_items_action)
+        menu.addSeparator()
+        menu.addAction(select_contained_action)
 
         return menu
 
@@ -105,6 +116,12 @@ class App(QtWidgets.QWidget):
         vd_node = idx.data()
 
         cmds.sets(cmds.ls(selection=True), remove=vd_node)
+
+    def on_select_contained(self):
+        idx = self.view.currentIndex()
+        vd_node = idx.data()
+
+        cmds.select(vd_node)
 
 
 def show(parent=None):
