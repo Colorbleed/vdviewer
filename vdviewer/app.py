@@ -1,10 +1,16 @@
 __author__ = "aardschok"
 
+import sys
+
 from maya import cmds
 
 from avalon.vendor.Qt import QtWidgets, QtCore
 
 import version
+import lib
+
+module = sys.modules[__name__]
+module.window = None
 
 
 class App(QtWidgets.QWidget):
@@ -99,3 +105,17 @@ class App(QtWidgets.QWidget):
         vd_node = idx.data()
 
         cmds.sets(cmds.ls(selection=True), remove=vd_node)
+
+
+def show(parent=None):
+    try:
+        module.window.close()
+        del module.window
+    except (RuntimeError, AttributeError):
+        pass
+
+    with lib.application():
+        window = App(parent)
+        window.show()
+
+        module.window = window
