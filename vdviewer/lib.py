@@ -1,6 +1,6 @@
 import contextlib
 
-from avalon.vendor.Qt import QtWidgets
+from vendor.Qt import QtWidgets
 
 
 @contextlib.contextmanager
